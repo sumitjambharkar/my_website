@@ -4,7 +4,8 @@ const User = require('./model/User')
 const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser')
 const app = express()
- 
+const flash = require('connect-flash');
+const session = require('express-session')
 
 
 const ejs = require('ejs');
@@ -20,6 +21,14 @@ mongoose.connect('mongodb+srv://sumit:8055@cluster0.nuh3e.mongodb.net/user', {
   useFindAndModify: false,
   useCreateIndex: true
 });
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
+app.use(flash());
 
 
 // set ejs Template
@@ -44,6 +53,7 @@ app.post('/contact',async(req, res) => {
     number: req.body.number,
     message:req.body.message
   }).save()
+  req.flash('message','successMessage')
   res.status(201).redirect('/')
 
 });
